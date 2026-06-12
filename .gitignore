@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+debug_test.py
+test_minimal.py
+toggle_signal.txt

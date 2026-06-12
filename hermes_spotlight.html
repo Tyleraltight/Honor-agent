@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --canvas: #d4c9b8;
+    --ink: #0d0d0d;
+    --ink-light: #4a4a4a;
+    --terracotta: #d97757;
+    --border: #c5bbaa;
+    --shadow: rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", sans-serif;
+    background: var(--canvas);
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  .spotlight {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .input-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    gap: 10px;
+    cursor: move;
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+  .input-row input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: var(--ink);
+    cursor: text;
+  }
+  .input-row input::placeholder { color: var(--ink-light); opacity: 0.5; }
+  .icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.4;
+    flex-shrink: 0;
+    color: var(--ink-light);
+  }
+  .close-btn {
+    background: none;
+    border: none;
+    color: var(--ink-light);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 0 6px;
+    line-height: 1;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+  .close-btn:hover {
+    opacity: 1;
+    color: var(--terracotta);
+  }
+  .output {
+    display: none;
+    flex: 1;
+    padding: 12px 18px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.7;
+    overflow-y: auto;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .output::-webkit-scrollbar { width: 6px; }
+  .output::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .output pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: "Cascadia Code", "Fira Code", monospace;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .msg-role {
+    margin: 12px 0 4px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: "Cascadia Code", "Fira Code", monospace;
+  }
+  .msg-role.user { color: var(--terracotta); }
+  .msg-role.ai { color: var(--ink-light); }
+  .msg-body { margin-bottom: 8px; }
+  .tool-info {
+    color: var(--ink-light);
+    font-size: 12px;
+    font-style: italic;
+    margin: 4px 0;
+  }
+  .error-msg { color: var(--terracotta); margin-top: 8px; }
+  .history-hint {
+    padding: 10px 18px;
+    font-size: 13px;
+    color: var(--ink-light);
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .cursor {
+    display: inline;
+    animation: blink 1s step-end infinite;
+    color: var(--terracotta);
+  }
+</style>
+</head>
+<body>
+<div class="spotlight" id="spotlight">
+  <div class="input-row" id="inputRow">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input id="queryInput" type="text" placeholder="/new 开启新对话" autofocus />
+    <button class="close-btn" id="closeBtn" title="关闭">×</button>
+  </div>
+  <div class="history-hint" id="historyHint"></div>
+  <div class="output" id="output"></div>
+</div>
+
+<script>
+const input = document.getElementById('queryInput');
+const output = document.getElementById('output');
+const historyHint = document.getElementById('historyHint');
+const inputRow = document.getElementById('inputRow');
+const closeBtn = document.getElementById('closeBtn');
+
+let busy = false;
+let pollTimer = null;
+let currentPre = null;
+
+// ── 拖动 ──
+let dragging = false;
+inputRow.addEventListener('mousedown', (e) => {
+  if (e.target === input || e.target === closeBtn) return;
+  dragging = true;
+  pywebview.api.move_window(e.screenX - 320, e.screenY - 40);
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('mouseup', onDragEnd);
+});
+function onDrag(e) {
+  if (!dragging) return;
+  pywebview.api.move_window(e.screenX - 320, e.screenY - 40);
+}
+function onDragEnd() {
+  dragging = false;
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('mouseup', onDragEnd);
+}
+
+// ── 输入 ──
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuery(); }
+});
+
+// 关闭按钮
+closeBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  try {
+    await pywebview.api.destroy();
+  } catch (err) {
+    console.error('destroy error:', err);
+  }
+});
+
+async function submitQuery() {
+  const text = input.value.trim();
+  if (!text || busy) return;
+
+  input.value = '';
+  output.style.display = 'block';
+  historyHint.style.display = 'none';
+
+  appendRole('Tyler', 'user');
+  appendBody(escapeHtml(text));
+
+  let raw;
+  try {
+    raw = await pywebview.api.chat(text);
+  } catch (e) {
+    appendError('调用失败: ' + e.message);
+    return;
+  }
+
+  let resp;
+  try {
+    resp = JSON.parse(raw);
+  } catch (e) {
+    return;
+  }
+
+  if (resp.error) {
+    appendError(resp.error);
+    return;
+  }
+  if (resp.type === 'new') {
+    output.innerHTML = '<div class="tool-info">新对话已开始</div>';
+    return;
+  }
+
+  busy = true;
+  appendRole('K', 'ai');
+  currentPre = document.createElement('pre');
+  currentPre.className = 'msg-body';
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  cursor.textContent = '▌';
+  currentPre.appendChild(cursor);
+  output.appendChild(currentPre);
+
+  startPolling();
+}
+
+function scrollToBottom() {
+  output.scrollTop = output.scrollHeight;
+}
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  let lastEventTime = Date.now();
+  pollTimer = setInterval(async () => {
+    try {
+      const raw = await pywebview.api.poll();
+      const events = JSON.parse(raw);
+      if (events.length > 0) {
+        lastEventTime = Date.now();
+        for (const ev of events) {
+          handleEvent(ev);
+        }
+      }
+      if (Date.now() - lastEventTime > 120000) {
+        stopPolling();
+        busy = false;
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, 100);
+}
+
+function stopPolling() {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+}
+
+function handleEvent(ev) {
+  if (ev.t === 'tok') {
+    if (currentPre) {
+      const cursor = currentPre.querySelector('.cursor');
+      const textNode = document.createTextNode(ev.v);
+      if (cursor) {
+        currentPre.insertBefore(textNode, cursor);
+      } else {
+        currentPre.appendChild(textNode);
+      }
+      scrollToBottom();
+    }
+  } else if (ev.t === 'tool') {
+    const div = document.createElement('div');
+    div.className = 'tool-info';
+    div.textContent = '🔧 ' + ev.v;
+    output.appendChild(div);
+    scrollToBottom();
+  } else if (ev.t === 'cont') {
+    if (currentPre) {
+      const cursor = currentPre.querySelector('.cursor');
+      if (cursor) cursor.remove();
+    }
+    currentPre = document.createElement('pre');
+    currentPre.className = 'msg-body';
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    cursor.textContent = '▌';
+    currentPre.appendChild(cursor);
+    output.appendChild(currentPre);
+    scrollToBottom();
+  } else if (ev.t === 'done') {
+    if (currentPre) {
+      const cursor = currentPre.querySelector('.cursor');
+      if (cursor) cursor.remove();
+    }
+    currentPre = null;
+    busy = false;
+    stopPolling();
+    scrollToBottom();
+  } else if (ev.t === 'err') {
+    if (currentPre) {
+      const cursor = currentPre.querySelector('.cursor');
+      if (cursor) cursor.remove();
+    }
+    appendError(ev.v);
+    busy = false;
+    stopPolling();
+    scrollToBottom();
+  }
+}
+
+function appendRole(name, type) {
+  const div = document.createElement('div');
+  div.className = 'msg-role ' + type;
+  div.textContent = name + ':';
+  output.appendChild(div);
+}
+
+function appendBody(html) {
+  const div = document.createElement('div');
+  div.className = 'msg-body';
+  div.innerHTML = html;
+  output.appendChild(div);
+}
+
+function appendError(msg) {
+  const div = document.createElement('div');
+  div.className = 'error-msg';
+  div.textContent = '错误: ' + msg;
+  output.appendChild(div);
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ── 初始化 ──
+window.addEventListener('pywebviewready', async () => {
+  input.focus();
+});
+</script>
+</body>
+</html>
