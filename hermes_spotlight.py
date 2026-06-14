@@ -253,6 +253,7 @@ class SpotlightAPI:
 
     def set_window(self, window):
         self._window = window
+        self._visible = True  # 窗口创建时是显示的
 
     def toggle_visibility(self):
         """切换搜索框的最小化/恢复状态"""

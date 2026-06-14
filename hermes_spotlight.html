@@ -97,6 +97,8 @@
   .msg-role.user { color: var(--terracotta); }
   .msg-role.ai { color: var(--ink-light); }
   .msg-body { margin-bottom: 8px; }
+  .msg-body.user { color: #4a4a4a; }
+  .msg-body.ai { color: #0d0d0d; font-weight: 600; font-family: -apple-system, "Segoe UI", sans-serif; }
   .tool-info {
     color: var(--ink-light);
     font-size: 12px;
@@ -169,14 +171,14 @@ input.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuery(); }
 });
 
-// 关闭按钮
+// 关闭按钮 - 最小化
 closeBtn.addEventListener('click', async (e) => {
   e.preventDefault();
   e.stopPropagation();
   try {
-    await pywebview.api.destroy();
+    await pywebview.api.hide_window();
   } catch (err) {
-    console.error('destroy error:', err);
+    console.error('hide error:', err);
   }
 });
 
@@ -189,7 +191,7 @@ async function submitQuery() {
   historyHint.style.display = 'none';
 
   appendRole('Tyler', 'user');
-  appendBody(escapeHtml(text));
+  appendBody(escapeHtml(text), 'user');
 
   let raw;
   try {
@@ -218,7 +220,7 @@ async function submitQuery() {
   busy = true;
   appendRole('K', 'ai');
   currentPre = document.createElement('pre');
-  currentPre.className = 'msg-body';
+  currentPre.className = 'msg-body ai';
   const cursor = document.createElement('span');
   cursor.className = 'cursor';
   cursor.textContent = '▌';
@@ -286,7 +288,7 @@ function handleEvent(ev) {
       if (cursor) cursor.remove();
     }
     currentPre = document.createElement('pre');
-    currentPre.className = 'msg-body';
+    currentPre.className = 'msg-body ai';
     const cursor = document.createElement('span');
     cursor.className = 'cursor';
     cursor.textContent = '▌';
@@ -321,9 +323,9 @@ function appendRole(name, type) {
   output.appendChild(div);
 }
 
-function appendBody(html) {
+function appendBody(html, type) {
   const div = document.createElement('div');
-  div.className = 'msg-body';
+  div.className = 'msg-body' + (type ? ' ' + type : '');
   div.innerHTML = html;
   output.appendChild(div);
 }
