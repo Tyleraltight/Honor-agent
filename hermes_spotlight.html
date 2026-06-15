@@ -251,9 +251,12 @@ async function submitQuery() {
 }
 
 function scrollToBottom() {
-  // 使用 requestAnimationFrame 确保 DOM 更新后再滚动
+  // 使用 scrollIntoView 滚动到最后一个子元素
   requestAnimationFrame(() => {
-    output.scrollTop = output.scrollHeight;
+    const lastChild = output.lastElementChild;
+    if (lastChild) {
+      lastChild.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
   });
 }
 
