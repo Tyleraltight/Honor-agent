@@ -107,6 +107,14 @@ SYSTEM_PROMPT = """你是 Hermes Spotlight，一个快速助手。你运行在�
 - 读写文件、列出目录、删除文件
 - 执行 shell 命令（cmd.exe）
 - 搜索文件内容
+- 打开本地应用（使用 start 命令）
+
+常用命令：
+- 打开时钟：start ms-clock:
+- 打开计算器：start calc:
+- 打开记事本：start notepad
+- 打开文件管理器：start explorer
+- 打开浏览器：start chrome 或 start msedge
 
 规则：
 - 简洁高效，像 macOS Spotlight 一样快速
@@ -343,8 +351,7 @@ class SpotlightAPI:
         if self._busy:
             return json.dumps({"error": "正在处理中，请稍候"})
 
-        # Gateway 模式不需要 API Key
-        if not _is_gateway_running() and not self._api_key:
+        if not self._api_key:
             return json.dumps({"error": "未找到 API Key"})
 
         if user_input.strip().lower() == "/new":
@@ -362,11 +369,8 @@ class SpotlightAPI:
                 break
 
         self._busy = True
-        # 根据 Gateway 是否运行选择调用方式
-        if _is_gateway_running():
-            thread = threading.Thread(target=self._do_stream_gateway, daemon=True)
-        else:
-            thread = threading.Thread(target=self._do_stream, daemon=True)
+        # 直接使用本地 API，保留本地工具执行能力
+        thread = threading.Thread(target=self._do_stream, daemon=True)
         thread.start()
         return json.dumps({"type": "ok"})
 
