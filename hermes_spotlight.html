@@ -190,33 +190,12 @@ async function submitQuery() {
   output.style.display = 'block';
   historyHint.style.display = 'none';
 
+  // 显示用户消息
   appendRole('Tyler', 'user');
   appendBody(escapeHtml(text), 'user');
+  scrollToBottom();
 
-  let raw;
-  try {
-    raw = await pywebview.api.chat(text);
-  } catch (e) {
-    appendError('调用失败: ' + e.message);
-    return;
-  }
-
-  let resp;
-  try {
-    resp = JSON.parse(raw);
-  } catch (e) {
-    return;
-  }
-
-  if (resp.error) {
-    appendError(resp.error);
-    return;
-  }
-  if (resp.type === 'new') {
-    output.innerHTML = '<div class="tool-info">新对话已开始</div>';
-    return;
-  }
-
+  // 立即显示 "K:" 和加载动画
   busy = true;
   appendRole('K', 'ai');
   currentPre = document.createElement('pre');
@@ -226,6 +205,47 @@ async function submitQuery() {
   cursor.textContent = '▌';
   currentPre.appendChild(cursor);
   output.appendChild(currentPre);
+  scrollToBottom();
+
+  // 调用 API
+  let raw;
+  try {
+    raw = await pywebview.api.chat(text);
+  } catch (e) {
+    appendError('调用失败: ' + e.message);
+    busy = false;
+    if (currentPre) {
+      const c = currentPre.querySelector('.cursor');
+      if (c) c.remove();
+    }
+    currentPre = null;
+    return;
+  }
+
+  let resp;
+  try {
+    resp = JSON.parse(raw);
+  } catch (e) {
+    busy = false;
+    return;
+  }
+
+  if (resp.error) {
+    appendError(resp.error);
+    busy = false;
+    if (currentPre) {
+      const c = currentPre.querySelector('.cursor');
+      if (c) c.remove();
+    }
+    currentPre = null;
+    return;
+  }
+  if (resp.type === 'new') {
+    output.innerHTML = '<div class="tool-info">新对话已开始</div>';
+    busy = false;
+    currentPre = null;
+    return;
+  }
 
   startPolling();
 }

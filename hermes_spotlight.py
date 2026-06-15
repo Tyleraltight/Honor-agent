@@ -709,7 +709,7 @@ def main():
         "Hermes Spotlight",
         url=str(HTML_PATH),
         width=600,
-        height=400,
+        height=300,
         frameless=True,
         on_top=True,
         easy_drag=False,
