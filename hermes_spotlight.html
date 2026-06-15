@@ -77,7 +77,8 @@
     font-size: 14px;
     color: var(--ink);
     line-height: 1.7;
-    overflow-y: scroll;  /* 强制显示滚动条 */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;  /* iOS 风格滚动 */
     user-select: text;
     -webkit-user-select: text;
   }
