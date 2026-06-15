@@ -251,7 +251,10 @@ async function submitQuery() {
 }
 
 function scrollToBottom() {
-  output.scrollTop = output.scrollHeight;
+  // 使用 requestAnimationFrame 确保 DOM 更新后再滚动
+  requestAnimationFrame(() => {
+    output.scrollTop = output.scrollHeight;
+  });
 }
 
 function startPolling() {
