@@ -81,7 +81,8 @@ TOOLS = [
             "type": "object",
             "properties": {
                 "command": {"type": "string", "description": "要执行的命令"},
-                "cwd": {"type": "string", "description": "工作目录"}
+                "cwd": {"type": "string", "description": "工作目录"},
+                "silent": {"type": "boolean", "description": "是否静默执行（不弹出窗口）", "default": False}
             },
             "required": ["command"]
         }
@@ -111,16 +112,22 @@ SYSTEM_PROMPT = """你是 Hermes Spotlight，一个快速助手。你运行在�
 
 常用命令：
 - 打开时钟：start ms-clock:
+- 打开计时器（3分钟）：start ms-clock:timer?duration=180
 - 打开计算器：start calc:
 - 打开记事本：start notepad
 - 打开文件管理器：start explorer
 - 打开浏览器：start chrome 或 start msedge
+
+静默执行：
+- 使用 silent: true 参数可以静默执行命令，不弹出窗口
+- 适用于后台任务、文件操作等
 
 规则：
 - 简洁高效，像 macOS Spotlight 一样快速
 - 直接执行，不要问"你确定吗"
 - 用中文回复
 - 如果需要多步骤操作，直接一步步做
+- 打开应用时默认使用静默模式，避免弹出终端窗口
 """
 
 # ── API 配置 ──────────────────────────────────────────────────────
@@ -212,7 +219,15 @@ def _execute_tool(name, args):
         elif name == "run_command":
             cmd = args["command"]
             cwd = args.get("cwd")
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=60, cwd=cwd)
+            silent = args.get("silent", False)
+            if silent:
+                # 静默执行，不弹出窗口
+                result = subprocess.run(
+                    cmd, shell=True, capture_output=True, text=True, timeout=60, cwd=cwd,
+                    creationflags=subprocess.CREATE_NO_WINDOW
+                )
+            else:
+                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=60, cwd=cwd)
             output = result.stdout + result.stderr
             return output.strip() if output else "(无输出)"
         elif name == "search_files":
