@@ -71,6 +71,7 @@
   .output {
     display: none;
     flex: 1;
+    min-height: 0;  /* 允许 flex 子元素收缩 */
     padding: 12px 18px;
     font-size: 14px;
     color: var(--ink);
@@ -251,12 +252,9 @@ async function submitQuery() {
 }
 
 function scrollToBottom() {
-  // 使用 scrollIntoView 滚动到最后一个子元素
+  // 只滚动 .output 容器内部，不影响输入框
   requestAnimationFrame(() => {
-    const lastChild = output.lastElementChild;
-    if (lastChild) {
-      lastChild.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }
+    output.scrollTop = output.scrollHeight;
   });
 }
 
