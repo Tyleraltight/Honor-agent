@@ -714,6 +714,7 @@ def main():
         on_top=True,
         easy_drag=False,
         js_api=api,
+        text_select=True,  # 允许文本选择
     )
     api.set_window(window)
 
