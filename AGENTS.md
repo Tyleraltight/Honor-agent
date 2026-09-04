@@ -17,10 +17,10 @@
 
 | 文件 | 路径 |
 |------|------|
-| AHK 脚本 | `E:\HermesSpotlight\copilot-to-hermes.ahk` |
-| Python 搜索框 | `E:\HermesSpotlight\hermes_spotlight.py` |
-| HTML UI | `E:\HermesSpotlight\hermes_spotlight.html` |
-| 启动脚本 | `E:\HermesSpotlight\hermes_spotlight.bat` |
+| AHK 脚本 | `E:\ClaudeCode\PROJECTS\Honor-agent\copilot-to-hermes.ahk` |
+| Python 搜索框 | `E:\ClaudeCode\PROJECTS\Honor-agent\hermes_spotlight.py` |
+| HTML UI | `E:\ClaudeCode\PROJECTS\Honor-agent\hermes_spotlight.html` |
+| 启动脚本 | `E:\ClaudeCode\PROJECTS\Honor-agent\hermes_spotlight.bat` |
 | AHK 可执行文件 | `C:\Users\26502\AppData\Local\Programs\AutoHotkey\v2\AutoHotkey64.exe` |
 | Hermes 根目录 | `E:\hermes\` |
 | Hermes SOUL.md | `E:\hermes\SOUL.md` |
@@ -145,7 +145,7 @@ SC06E:: {
 
 ## 开机自启动
 - AHK 快捷方式位于：`C:\Users\26502\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\HermesSpotlight.lnk`
-- 目标：`powershell.exe -Command "Start-Process -FilePath 'C:\Users\26502\AppData\Local\Programs\AutoHotkey\v2\AutoHotkey64.exe' -ArgumentList '\"E:\HermesSpotlight\copilot-to-hermes.ahk\"' -WindowStyle Hidden"`
+- 目标：`powershell.exe -Command "Start-Process -FilePath 'C:\Users\26502\AppData\Local\Programs\AutoHotkey\v2\AutoHotkey64.exe' -ArgumentList '\"E:\ClaudeCode\PROJECTS\Honor-agent\copilot-to-hermes.ahk\"' -WindowStyle Hidden"`
 
 ---
 
