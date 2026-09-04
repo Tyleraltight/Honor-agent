@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="hero-title hero-desc">
+  <title id="hero-title">Honor Agent - Personal Local, Privacy-First Desktop Automation Agent</title>
+  <desc id="hero-desc">Desktop Spotlight launcher and remote bot gateway with risk-tiered security guardrails.</desc>
+
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="terracotta-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d97757"/>
+      <stop offset="100%" stop-color="#e5987a"/>
+    </linearGradient>
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="360" rx="20" fill="url(#bg-gradient)" stroke="#30363d" stroke-width="1.5"/>
+
+  <!-- Left: Brand and Messaging -->
+  <g id="brand-block" transform="translate(64, 48)">
+    <!-- Category Badge -->
+    <rect width="250" height="28" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1"/>
+    <text x="12" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#d97757" letter-spacing="1">PRIVACY-FIRST AGENT</text>
+
+    <!-- Project Title -->
+    <text x="0" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="800" fill="#f0f6fc" letter-spacing="-0.5">Honor Agent</text>
+
+    <!-- Subtitle / Value Proposition -->
+    <text x="0" y="116" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="400" fill="#8b949e">A Personal Local Desktop Automation Agent &amp; Cross-Device Gateway</text>
+    <text x="0" y="142" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif" font-size="14" font-weight="400" fill="#6e7681">深入系统底层执行多步骤脚本与桌面工作流 · 毫秒级呼出 · 分级安全护栏</text>
+
+    <!-- Tags & Capabilities -->
+    <g transform="translate(0, 180)">
+      <!-- Tag 1 -->
+      <rect x="0" y="0" width="130" height="32" rx="16" fill="#1f242c" stroke="#38414e" stroke-width="1"/>
+      <text x="14" y="20" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="500" fill="#c9d1d9">Sub-100ms UI</text>
+
+      <!-- Tag 2 -->
+      <rect x="142" y="0" width="154" height="32" rx="16" fill="#1f242c" stroke="#38414e" stroke-width="1"/>
+      <text x="156" y="20" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="500" fill="#c9d1d9">Tiered Guardrails</text>
+
+      <!-- Tag 3 -->
+      <rect x="308" y="0" width="146" height="32" rx="16" fill="#1f242c" stroke="#38414e" stroke-width="1"/>
+      <text x="322" y="20" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="500" fill="#c9d1d9">Remote Gateway</text>
+    </g>
+
+    <!-- Hotkey Prompt Bar -->
+    <g transform="translate(0, 232)">
+      <rect width="360" height="34" rx="8" fill="#161b22" stroke="#d97757" stroke-width="1" stroke-dasharray="4 3"/>
+      <text x="14" y="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="600" fill="#d97757">HOTKEY: Ctrl + Shift + Space / F11</text>
+    </g>
+  </g>
+
+  <!-- Right: Real Spotlight UI Window Mockup -->
+  <g id="spotlight-mockup" transform="translate(680, 48)" filter="url(#card-shadow)">
+    <!-- Spotlight Outer Frame (Warm Taupe: #d4c9b8) -->
+    <rect width="456" height="264" rx="14" fill="#d4c9b8" stroke="#b8aa94" stroke-width="1.5"/>
+
+    <!-- Window Header -->
+    <g transform="translate(18, 16)">
+      <circle cx="6" cy="6" r="5" fill="#d97757"/>
+      <circle cx="22" cy="6" r="5" fill="#b0a08e"/>
+      <circle cx="38" cy="6" r="5" fill="#8e8273"/>
+      <text x="170" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#5c5346">HERMES SPOTLIGHT</text>
+    </g>
+
+    <!-- Search / Input Capsule -->
+    <g transform="translate(18, 38)">
+      <rect width="420" height="42" rx="8" fill="#f5efe6" stroke="#bdae9c" stroke-width="1"/>
+      <text x="16" y="26" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="500" fill="#2d2926">/run tasklist | findstr python</text>
+      <rect x="268" y="13" width="2" height="18" fill="#d97757"/>
+      <rect x="360" y="8" width="50" height="26" rx="4" fill="#d97757"/>
+      <text x="372" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#ffffff">ENTER</text>
+    </g>
+
+    <!-- Agent Output Panel -->
+    <g transform="translate(18, 92)">
+      <rect width="420" height="154" rx="8" fill="#e8ded0" stroke="#cdbeab" stroke-width="1"/>
+
+      <!-- User Turn -->
+      <g transform="translate(14, 16)">
+        <rect width="46" height="20" rx="4" fill="#d97757"/>
+        <text x="10" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#ffffff">Tyler</text>
+        <text x="56" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="500" fill="#3a342c">Check Python processes and free disk</text>
+      </g>
+
+      <!-- Assistant / Guardrail Status -->
+      <g transform="translate(14, 46)">
+        <rect width="52" height="20" rx="4" fill="#4a4a4a"/>
+        <text x="10" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#ffffff">Honor</text>
+        <rect x="62" y="0" width="138" height="20" rx="4" fill="#d0c3b0"/>
+        <text x="68" y="14" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="600" fill="#2c2822">TIER-3 WHITELIST: PASS</text>
+      </g>
+
+      <!-- Result Terminal Block -->
+      <g transform="translate(14, 76)">
+        <rect width="392" height="66" rx="6" fill="#2d2926"/>
+        <text x="12" y="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#85e89d">&gt; [Guardrail Approved] PID 14208 pythonw.exe</text>
+        <text x="12" y="38" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#c9d1d9">&gt; Disk: 252 GB free / 931 GB total (OS: Win11)</text>
+        <text x="12" y="54" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#e5987a">&gt; Completed in 0.08s (Streaming done)</text>
+      </g>
+    </g>
+  </g>
+</svg>

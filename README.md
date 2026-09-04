@@ -1,11 +1,10 @@
-# Honor Agent
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="Honor Agent - Personal Local, Privacy-First Desktop Automation Agent &amp; Cross-Device Gateway">
+</p>
 
-**A Personal Local, Privacy-First Desktop Automation Agent & Cross-Device Gateway**  
-**基于本地大模型与轻量运行器的隐私优先型桌面智能体与跨端自动化助手**
-
----
-
-[English](#english) | [中文说明](#chinese)
+<p align="center">
+  <a href="#english">English Documentation</a> &bull; <a href="#chinese">中文说明文档</a>
+</p>
 
 ---
 
@@ -27,43 +26,14 @@ Honor Agent is an open-source, privacy-first desktop intelligent assistant engin
 
 ### 2. System Architecture
 
-```
-[ Trigger & Interface Layer ]
-  +---------------------------+        +---------------------------+
-  | Desktop Spotlight UI      |        | Remote Bot Gateway        |
-  | (pywebview + launcher.ahk)|        | (Telegram Async Queue)    |
-  +-------------+-------------+        +-------------+-------------+
-                |                                    |
-                +-----------------+------------------+
-                                  |
-                                  v
-[ Orchestration & Core Engine ]
-  +----------------------------------------------------------------+
-  | core.agent_runner.AgentRunner                                  |
-  | - LLM API Streaming (Xiaomi mimo-v2.5 / Anthropic Messages)    |
-  | - Context & Memory Hydration (SOUL.md, MEMORY.md, USER.md)     |
-  | - Tool Registry & Dispatching                                  |
-  +-------------------------------+--------------------------------+
-                                  |
-                                  v
-[ Security & Defense Layer ]
-  +----------------------------------------------------------------+
-  | core.guardrails.GuardrailsValidator                            |
-  | - Tier 1: Path Traversal Sanitization (Blocks ..\Windows, etc.) |
-  | - Tier 2: Sandboxed Write Permissions                           |
-  | - Tier 3: Command Whitelist & Destructive Pattern Interception  |
-  +-------------------------------+--------------------------------+
-                                  |
-                                  v
-[ Execution & Tooling Layer ]
-  +----------------------------------------------------------------+
-  | Local OS Tools:                                                |
-  | - read_file / write_file / list_directory / delete_file        |
-  | - run_command (Whitelisted shell execution)                    |
-  | - search_files (Fast recursive pattern search)                 |
-  | - get_system_status (OS, CPU, memory, disk free telemetry)     |
-  +----------------------------------------------------------------+
-```
+<p align="center">
+  <img src="./assets/readme/architecture.svg" width="100%" alt="Honor Agent - Four-Layer Decoupled System Architecture">
+</p>
+
+* **Trigger & Interface Layer**: Desktop Spotlight floating UI (AutoHotkey v2 hook + pywebview) & Remote Bot Gateway (`bot_gateway.py` with sequential queue).
+* **Orchestration & Core Layer**: Headless `core.agent_runner.AgentRunner` managing tool calling, streaming protocols, and memory hydration (`SOUL.md`, `MEMORY.md`, `USER.md`).
+* **Security & Defense Layer**: Multi-tier `core.guardrails.GuardrailsValidator` enforcing path traversal defense and strict shell command whitelisting.
+* **Execution & Tooling Layer**: Native OS primitives for file management, process diagnostics, and telemetry retrieval.
 
 ---
 
@@ -71,25 +41,29 @@ Honor Agent is an open-source, privacy-first desktop intelligent assistant engin
 
 ```
 Honor-agent/
+|-- assets/
+|   `-- readme/
+|       |-- hero.svg                     # High-fidelity project hero banner
+|       `-- architecture.svg             # Multi-layer architecture diagram
 |-- core/
 |   |-- __init__.py
-|   |-- agent_runner.py          # Headless orchestrator & tool execution
-|   `-- guardrails.py            # Risk-tiered path & command validator
+|   |-- agent_runner.py                  # Headless orchestrator & tool execution
+|   `-- guardrails.py                    # Risk-tiered path & command validator
 |-- docs/
 |   `-- adr/
 |       `-- 0001-hybrid-agent-architecture.md  # Architecture decision record
 |-- tests/
 |   |-- __init__.py
-|   `-- test_harness.py          # 14 automated unit tests
-|-- bot_gateway.py               # Async Telegram Bot gateway (with --mock mode)
-|-- hermes_spotlight.py          # pywebview desktop launcher
-|-- hermes_spotlight.html        # Floating Spotlight UI
-|-- hermes_spotlight.bat         # Background process bootstrapper
-|-- launcher.ahk                 # AutoHotkey v2 global hotkey hook
-|-- copilot-to-hermes.ahk        # MagicBook Copilot hardware research script
-|-- CONTEXT.md                   # Domain glossary & ubiquitous language
-|-- AGENTS.md                    # Agent context & hardware scancode notes
-`-- README.md                    # Bilingual documentation
+|   `-- test_harness.py                  # 14 automated unit tests
+|-- bot_gateway.py                       # Async Telegram Bot gateway (with --mock mode)
+|-- hermes_spotlight.py                  # pywebview desktop launcher
+|-- hermes_spotlight.html                # Floating Spotlight UI
+|-- hermes_spotlight.bat                 # Background process bootstrapper
+|-- launcher.ahk                         # AutoHotkey v2 global hotkey hook
+|-- copilot-to-hermes.ahk                # MagicBook Copilot hardware research script
+|-- CONTEXT.md                           # Domain glossary & ubiquitous language
+|-- AGENTS.md                            # Agent context & hardware scancode notes
+`-- README.md                            # Bilingual documentation
 ```
 
 ---
